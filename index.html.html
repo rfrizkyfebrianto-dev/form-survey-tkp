@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Form Survey TKP</title>
+<style>
+:root{--bg:#f3f5f7;--surface:#fff;--text:#17202a;--muted:#64707d;--line:#d8dee5;--accent:#1f4f78;--accent2:#eaf1f7;--danger:#a33a3a;}
+*{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text);line-height:1.45}
+.app{min-height:100vh;background:var(--bg)}
+header{background:var(--accent);color:#fff;padding:22px 18px;box-shadow:0 2px 8px #0002} header .wrap,main{max-width:1050px;margin:auto} h1{margin:0;font-size:24px} header p{margin:5px 0 0;opacity:.85;font-size:13px}
+main{padding:22px 14px 50px}.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:15px;position:sticky;top:0;z-index:5;background:var(--bg);padding:8px 0}
+button{border:0;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer;background:var(--accent);color:white}button.secondary{background:#fff;color:var(--accent);border:1px solid var(--line)}button.danger{background:#fff;color:var(--danger);border:1px solid #e2bcbc}
+.btn-sm{padding:6px 10px;font-size:12px;border-radius:6px;}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin-bottom:14px;padding:18px;box-shadow:0 1px 3px #00000008}.section-title{font-size:16px;font-weight:800;color:var(--accent);margin:0 0 14px;padding-bottom:8px;border-bottom:2px solid var(--accent2);display:flex;justify-content:space-between;align-items:center;}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:flex;flex-direction:column;gap:5px}.full{grid-column:1/-1}label{font-weight:700;font-size:13px}input,textarea,select{width:100%;font:inherit;border:1px solid var(--line);border-radius:7px;padding:9px 10px;background:#fff;color:var(--text)}textarea{min-height:95px;resize:vertical}.hint{font-size:12px;color:var(--muted)}
+.witness{border:1px solid var(--line);border-radius:9px;padding:13px;margin-top:12px;position:relative;background:#fafbfc}.witness-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.witness h3{margin:0;font-size:14px}
+.subgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.yesno{display:flex;gap:15px;align-items:center;min-height:39px}.yesno label{font-weight:500}
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.photo-box{border:1px dashed #b9c2cc;border-radius:8px;padding:10px;background:#fafbfc;position:relative;display:flex;flex-direction:column;gap:8px;}.photo-box-header{display:flex;justify-content:space-between;align-items:center}.photo-preview{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:6px;background:#eef1f4;display:block;margin-top:4px}.signature{min-height:100px}
+.footer-sign{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:18px;align-items:start;}.signbox{text-align:center;padding-top:10px;display:flex;flex-direction:column;height:100%;}.signbox-content{margin-top:auto;}
+.status{font-size:12px;color:var(--muted);margin-left:auto;align-self:center}.print-only{display:none}
+@media(max-width:700px){.grid,.subgrid,.photo-grid,.footer-sign{grid-template-columns:1fr}.status{width:100%;margin-left:0}.toolbar{position:static}.card{padding:14px}header{padding:18px 14px}}
+@media print{body{background:#fff}.app{background:#fff}header{background:#fff;color:#000;box-shadow:none;border-bottom:2px solid #000;padding:10px 0}.toolbar,.hint,.no-print{display:none!important}main{padding:0;max-width:none}.card{box-shadow:none;border:1px solid #777;border-radius:0;break-inside:avoid;margin-bottom:8px;padding:10px}.section-title{color:#000;border-bottom:1px solid #000}.grid,.subgrid{gap:7px}input,textarea,select{border:0;border-bottom:1px solid #aaa;border-radius:0;padding:5px 2px;background:#fff}textarea{min-height:55px}.photo-preview{border:1px solid #aaa}.print-only{display:block}.page-break{break-before:page} @page{size:A4;margin:12mm}}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div class="wrap"><h1>FORM SURVEY TKP</h1><p>Form digital survey tempat kejadian perkara / lingkungan tertanggung</p></div></header>
+<main>
+<div class="toolbar no-print">
+<button onclick="window.print()">🖨️ Simpan / Cetak PDF</button>
+<button class="secondary" onclick="saveDraft()">💾 Simpan Draft</button>
+<button class="secondary" onclick="loadDraft()">↻ Muat Draft</button>
+<button class="danger" onclick="resetForm()">Reset</button><span id="status" class="status">Draft tersimpan otomatis di perangkat ini.</span>
+</div>
+
+<section class="card">
+<h2 class="section-title">1. Identitas Survey</h2>
+<div class="grid">
+<div class="field"><label>No. Polis</label><input name="no_polis"></div>
+<div class="field"><label>Tertanggung</label><input name="tertanggung"></div>
+<div class="field"><label>Merek / Type Kendaraan</label><input name="kendaraan"></div>
+<div class="field"><label>No. Polisi</label><input name="nopol"></div>
+<div class="field"><label>Tanggal Survey</label><input type="date" name="tanggal_survey"></div>
+<div class="field"><label>Surveyor</label><input name="surveyor"></div>
+</div></section>
+
+<section class="card">
+<div class="section-title">
+  <span>2. Keterangan Saksi-Saksi di Lingkungan TKP / Rumah Tertanggung (Korban)</span>
+  <button type="button" class="btn-sm no-print" onclick="addWitness()">+ Tambah Saksi</button>
+</div>
+<div class="hint">Saksi minimum 1 orang. Isi nama, alamat, dan profesi.</div>
+<div id="witnessList"></div>
+</section>
+
+<section class="card">
+<h2 class="section-title">3. Administrasi Kepemilikan Kontrak</h2>
+<div class="field"><label>Status Kepemilikan dan Penggunaan Kendaraan</label><textarea name="status_kepemilikan"></textarea></div>
+<div class="field" style="margin-top:10px"><label>Keterangan tambahan terkait administrasi / kontrak</label><textarea name="administrasi_tambahan"></textarea></div>
+</section>
+
+<section class="card">
+<h2 class="section-title">4. Keterangan Tambahan Lain yang Didapati Saat Survey TKP</h2>
+<textarea name="keterangan_tambahan" placeholder="Tuliskan temuan, kondisi lokasi, informasi lingkungan, atau hal lain yang relevan."></textarea>
+</section>
+
+<section class="card">
+<div class="section-title">
+  <span>5. Foto TKP</span>
+  <button type="button" id="btnAddPhoto" class="btn-sm no-print" onclick="addPhotoBox()">+ Tambah Foto TKP</button>
+</div>
+<div class="hint" style="margin-bottom:10px">Minimal 3 foto TKP. Tambahkan keterangan jika diperlukan.</div>
+<div class="photo-grid" id="photoGrid"></div>
+</section>
+
+<section class="card">
+<h2 class="section-title">6. Map ke Lokasi</h2>
+<div class="grid"><div class="field"><label>Alamat / titik lokasi</label><input name="alamat_lokasi"></div><div class="field"><label>Link Google Maps</label><input name="maps_link" placeholder="https://maps.google.com/..." type="url"></div></div>
+</section>
+
+<section class="card">
+<h2 class="section-title">7. Analisa dan Kesimpulan</h2><textarea name="analisa_kesimpulan"></textarea>
+</section>
+<section class="card">
+<h2 class="section-title">8. Rekomendasi</h2><textarea name="rekomendasi"></textarea>
+</section>
+
+<section class="card">
+<div class="footer-sign">
+  <div class="signbox">
+    <div class="field no-print" style="text-align:left;margin-bottom:12px">
+      <label>Tempat, Tanggal, Bulan & Tahun Form Dibuat</label>
+      <div class="subgrid">
+        <div class="field"><label>Tempat</label><input name="tempat_form" placeholder="Contoh: Jambi"></div>
+        <div class="field"><label>Tanggal</label><input type="number" name="tanggal_form" min="1" max="31" placeholder="Tanggal"></div>
+        <div class="field"><label>Bulan & Tahun</label><input type="month" name="bulan_tahun_form"></div>
+      </div>
+    </div>
+    <div class="print-only" style="margin-bottom:10px"><span id="printPlace"></span>, <span id="printDate"></span></div>
+    <div class="signbox-content">
+      <div>Insurance Administrator</div>
+      <canvas id="signaturePad" class="signature" width="420" height="150" style="width:100%;border:1px dashed #b9c2cc;border-radius:7px;background:#fff;touch-action:none"></canvas>
+      <div class="no-print" style="margin-top:7px"><button type="button" class="secondary" onclick="clearSignature()">Hapus TTD</button></div>
+      <div class="field" style="margin-top:10px">
+        <label>Nama / Tanda Tangan</label>
+        <input name="nama_ttd_admin" placeholder="Ketik nama / tanda tangan di sini">
+      </div>
+    </div>
+  </div>
+  <div class="signbox">
+    <div class="signbox-content">
+      <div>Koordinator Wilayah</div>
+      <canvas id="signaturePadCoordinator" class="signature" width="420" height="150" style="width:100%;border:1px dashed #b9c2cc;border-radius:7px;background:#fff;touch-action:none"></canvas>
+      <div class="no-print" style="margin-top:7px"><button type="button" class="secondary" onclick="clearCoordinatorSignature()">Hapus TTD</button></div>
+      <div class="field" style="margin-top:10px">
+        <label>Nama / Tanda Tangan</label>
+        <input name="nama_ttd_korwil" placeholder="Ketik nama / tanda tangan di sini">
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+</main></div>
+<script>
+const KEY='form-survey-tkp-v1';
+let witnessCount = 0;
+let photoCount = 0;
+const MIN_PHOTOS = 3;
+
+function addWitness(data = {}) {
+  witnessCount++;
+  const id = witnessCount;
+  const container = document.getElementById('witnessList');
+  const div = document.createElement('div');
+  div.className = 'witness';
+  div.id = `witness_box_${id}`;
+  div.innerHTML = `
+    <div class="witness-header">
+      <h3 class="witness-title">Saksi</h3>
+      <button type="button" class="danger btn-sm no-print" onclick="removeWitness(${id})">Hapus Saksi</button>
+    </div>
+    <div class="subgrid">
+      <div class="field"><label>Nama</label><input name="s${id}_nama"></div>
+      <div class="field"><label>Alamat</label><input name="s${id}_alamat"></div>
+      <div class="field"><label>Profesi</label><input name="s${id}_profesi"></div>
+    </div>
+    <div class="field" style="margin-top:10px">
+      <label>Apakah saksi mendengar ada peristiwa kerugian yang dialami tertanggung/korban?</label>
+      <div class="yesno">
+        <label><input type="radio" name="s${id}_dengar" value="Ya"> Ya</label>
+        <label><input type="radio" name="s${id}_dengar" value="Tidak"> Tidak</label>
+      </div>
+    </div>
+    <div class="field"><label>Kapan informasi peristiwa kerugian tersebut diketahui saksi?</label><input name="s${id}_kapan"></div>
+    <div class="field" style="margin-top:10px"><label>Bagaimana kronologis peristiwa kerugian tersebut?</label><textarea name="s${id}_kronologi"></textarea></div>
+  `;
+  container.appendChild(div);
+  reindexWitnesses();
+  bindAutoSave();
+}
+
+function removeWitness(id) {
+  const box = document.getElementById(`witness_box_${id}`);
+  if (box) box.remove();
+  reindexWitnesses();
+  saveDraft(true);
+}
+
+function reindexWitnesses() {
+  const boxes = document.querySelectorAll('#witnessList .witness');
+  boxes.forEach((box, idx) => {
+    const num = idx + 1;
+    box.querySelector('.witness-title').textContent = `Saksi ${num}`;
+  });
+}
+
+function addPhotoBox() {
+  photoCount++;
+  const id = photoCount;
+  const grid = document.getElementById('photoGrid');
+  const div = document.createElement('div');
+  div.className = 'photo-box';
+  div.id = `photo_box_${id}`;
+  div.innerHTML = `
+    <div class="photo-box-header">
+      <label class="photo-title">Foto TKP</label>
+      <button type="button" class="danger btn-sm no-print" onclick="removePhotoBox(${id})">Hapus</button>
+    </div>
+    <input type="file" accept="image/*" onchange="previewPhoto(this,'photo_img_${id}')">
+    <img id="photo_img_${id}" class="photo-preview" alt="Foto TKP">
+    <div class="field" style="margin-top:4px">
+      <label style="font-size:11px;font-weight:600">Keterangan Foto</label>
+      <input name="photo_caption_${id}" placeholder="Keterangan singkat foto..." style="padding:6px 8px;font-size:12px;">
+    </div>
+  `;
+  grid.appendChild(div);
+  reindexPhotos();
+  bindAutoSave();
+}
+
+function removePhotoBox(id) {
+  const currentPhotos = document.querySelectorAll('#photoGrid .photo-box').length;
+  if (currentPhotos <= MIN_PHOTOS) {
+    alert(`Minimal foto TKP adalah ${MIN_PHOTOS} foto.`);
+    return;
+  }
+  const box = document.getElementById(`photo_box_${id}`);
+  if (box) box.remove();
+  reindexPhotos();
+  saveDraft(true);
+}
+
+function reindexPhotos() {
+  const boxes = document.querySelectorAll('#photoGrid .photo-box');
+  boxes.forEach((box, idx) => {
+    const num = idx + 1;
+    box.querySelector('.photo-title').textContent = `Foto TKP ${num}`;
+  });
+}
+
+const fields=()=>Array.from(document.querySelectorAll('input[name],textarea[name],select[name]'));
+function serialize(){
+  const data={
+    witnessCount: document.querySelectorAll('#witnessList .witness').length,
+    photoCount: document.querySelectorAll('#photoGrid .photo-box').length,
+    photos: {}
+  };
+  fields().forEach(el=>{
+    if(el.type==='radio'){
+      if(el.checked) data[el.name]=el.value;
+    } else data[el.name]=el.value;
+  });
+  document.querySelectorAll('.photo-preview').forEach((img, idx) => {
+    if(img.src) data.photos[idx] = img.src;
+  });
+  return data;
+}
+
+function apply(data){
+  document.getElementById('witnessList').innerHTML = '';
+  witnessCount = 0;
+  const wTarget = data.witnessCount || 2;
+  for(let i=0; i<wTarget; i++) addWitness();
+
+  document.getElementById('photoGrid').innerHTML = '';
+  photoCount = 0;
+  const pTarget = Math.max(data.photoCount !== undefined ? data.photoCount : MIN_PHOTOS, MIN_PHOTOS);
+  for(let i=0; i<pTarget; i++) addPhotoBox();
+
+  fields().forEach(el=>{
+    if(el.type==='radio') el.checked=data[el.name]===el.value;
+    else el.value=data[el.name]??'';
+  });
+
+  if(data.photos){
+    const imgs = document.querySelectorAll('.photo-preview');
+    Object.keys(data.photos).forEach(idx => {
+      if(imgs[idx]) imgs[idx].src = data.photos[idx];
+    });
+  }
+}
+
+function saveDraft(silent=false){
+  localStorage.setItem(KEY,JSON.stringify(serialize()));
+  if(!silent)msg('Draft berhasil disimpan di perangkat ini.');
+}
+
+function loadDraft(){
+  const d=localStorage.getItem(KEY);
+  if(!d){msg('Belum ada draft tersimpan.');return;}
+  apply(JSON.parse(d));
+  msg('Draft berhasil dimuat.');
+}
+
+function resetForm(){
+  if(confirm('Hapus seluruh isian formulir?')){
+    document.getElementById('witnessList').innerHTML = '';
+    document.getElementById('photoGrid').innerHTML = '';
+    witnessCount = 0;
+    photoCount = 0;
+    initDefaultStructures();
+    document.querySelectorAll('input,textarea').forEach(e=>{
+      if(e.type==='radio') e.checked=false;
+      else if(e.type!=='file') e.value='';
+    });
+    localStorage.removeItem(KEY);
+    msg('Form telah direset.');
+  }
+}
+
+function msg(t){
+  document.getElementById('status').textContent=t;
+  setTimeout(()=>document.getElementById('status').textContent='Draft tersimpan otomatis di perangkat ini.',2500);
+}
+
+function previewPhoto(input,id){
+  const f=input.files?.[0];
+  if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    document.getElementById(id).src=e.target.result;
+    saveDraft(true);
+  };
+  r.readAsDataURL(f);
+}
+
+const pad=document.getElementById('signaturePad');
+const ctx=pad.getContext('2d');
+let drawing=false;
+function pos(e,target){
+  const r=target.getBoundingClientRect();
+  const p=e.touches?.[0]||e;
+  return{x:(p.clientX-r.left)*target.width/r.width,y:(p.clientY-r.top)*target.height/r.height};
+}
+function bindSignature(canvas,storageKey,clearFnName){
+  const c=canvas,context=c.getContext('2d');
+  let active=false;
+  function start(e){active=true;context.beginPath();const p=pos(e,c);context.moveTo(p.x,p.y);e.preventDefault()}
+  function draw(e){if(!active)return;const p=pos(e,c);context.lineTo(p.x,p.y);context.strokeStyle='#17202a';context.lineWidth=2;context.lineCap='round';context.stroke();e.preventDefault()}
+  function end(){if(active)localStorage.setItem(storageKey,c.toDataURL());active=false}
+  function clear(){context.clearRect(0,0,c.width,c.height);localStorage.removeItem(storageKey)}
+  window[clearFnName]=clear;
+  c.addEventListener('mousedown',start);
+  c.addEventListener('mousemove',draw);
+  window.addEventListener('mouseup',end);
+  c.addEventListener('touchstart',start,{passive:false});
+  c.addEventListener('touchmove',draw,{passive:false});
+  c.addEventListener('touchend',end);
+  const saved=localStorage.getItem(storageKey);
+  if(saved){const im=new Image();im.onload=()=>context.drawImage(im,0,0);im.src=saved}
+}
+bindSignature(pad,KEY+'-signature','clearSignature');
+bindSignature(document.getElementById('signaturePadCoordinator'),KEY+'-coordinator-signature','clearCoordinatorSignature');
+
+function bindAutoSave(){
+  fields().forEach(el=>{
+    el.removeEventListener('input', autoSaveHandler);
+    el.removeEventListener('change', autoSaveHandler);
+    el.addEventListener('input', autoSaveHandler);
+    el.addEventListener('change', autoSaveHandler);
+  });
+}
+function autoSaveHandler(){ saveDraft(true); }
+
+function updatePrintDate(){
+  const place=document.querySelector('[name="tempat_form"]')?.value||'Jambi';
+  const day=document.querySelector('[name="tanggal_form"]')?.value;
+  const monthYear=document.querySelector('[name="bulan_tahun_form"]')?.value;
+  document.getElementById('printPlace').textContent=place;
+  document.getElementById('printDate').textContent=day&&monthYear?new Date(monthYear+'-'+String(day).padStart(2,'0')).toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'}):new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'});
+}
+
+function initDefaultStructures(){
+  addWitness();
+  addWitness();
+  for(let i=0; i<MIN_PHOTOS; i++) addPhotoBox();
+}
+
+const savedData = localStorage.getItem(KEY);
+if(savedData){
+  apply(JSON.parse(savedData));
+} else {
+  initDefaultStructures();
+}
+
+updatePrintDate();
+['tempat_form','tanggal_form','bulan_tahun_form'].forEach(n=>document.querySelector('[name="'+n+'"]')?.addEventListener('input',updatePrintDate));
+</script>
+</body>
+</html>
